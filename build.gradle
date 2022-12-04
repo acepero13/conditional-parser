@@ -11,8 +11,8 @@ compileJava {
 
 group 'com.acepero13'
 version '1.0-SNAPSHOT'
-final antlrGen='gen'
-final baseDir='src/main/java'
+final antlrGen = 'gen'
+final baseDir = 'generated-src/main/java/'
 
 repositories {
     mavenCentral()
@@ -20,6 +20,7 @@ repositories {
 }
 
 dependencies {
+
     antlr "org.antlr:antlr4:4.9.3"
     //compile "org.antlr:antlr4-runtime:4.9.3"
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
@@ -39,11 +40,9 @@ generateGrammarSource.doLast {
 }
 
 def moveAntlrGeneratedFilesToTheirPackages(FileTree grammarFiles, generatedFolder, destFolder) {
-    grammarFiles.each {File file ->
-        final grammarName = file.name.lastIndexOf('.') >= 0 ? file.name[0 .. file.name.lastIndexOf('.') - 1] : file.name
-        final grammarPackage = 'com.acepero13.research.conditional'
-                //extractPackageNameFromGrammerFile(file)
-        print(grammarPackage)
+    grammarFiles.each { File file ->
+        final grammarName = file.name.lastIndexOf('.') >= 0 ? file.name[0..file.name.lastIndexOf('.') - 1] : file.name
+        final String grammarPackage = 'com.acepero13.research.conditional'
         copy {
             from generatedFolder
             include "${grammarName}*.*"
@@ -54,34 +53,25 @@ def moveAntlrGeneratedFilesToTheirPackages(FileTree grammarFiles, generatedFolde
     project.delete fileTree(generatedFolder).include('*.*')
 }
 
-def extractPackageNameFromGrammerFile(File grammarFile) {
-    def grammarPackage = "unknown.package"
-    def packageRegex = ~/[ ]*package[ ]*([a-zA-Z]+[a-zA-Z0-9.-_]*)[ ]*;/
-    grammarFile.eachLine { line ->
-        def matcher = packageRegex.matcher(line)
-        if (matcher.find()){
-            grammarPackage = matcher.group(1)
-        }
-    }
-    return grammarPackage
-}
-
 
 compileJava.dependsOn generateGrammarSource
 sourceSets {
     generated {
-        java.srcDir 'generated-src/antlr/main/com/acepero13/research/conditional/'
+        java.srcDir 'generated-src/main'
     }
 }
 compileJava.source sourceSets.generated.java, sourceSets.main.java
-clean{
+clean {
     delete "generated-src"
+    delete "generated/java/com"
 }
 idea {
     module {
-        sourceDirs += file("generated-src/antlr/main/com/acepero13/research/conditional/")
+        sourceDirs += file("generated-src/main/java")
     }
 }
+
+
 test {
     useJUnitPlatform()
     testLogging {

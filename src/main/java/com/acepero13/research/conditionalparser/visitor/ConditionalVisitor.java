@@ -1,5 +1,6 @@
 package com.acepero13.research.conditionalparser.visitor;
 
+
 import com.acepero13.research.conditional.ConditionalBaseVisitor;
 import com.acepero13.research.conditional.ConditionalParser;
 import com.acepero13.research.conditionalparser.model.Expr;
@@ -19,21 +20,24 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
         Expr right = this.visit(ctx.expr(1));
 
         switch (ctx.op.getType()) {
-            case ConditionalParser.LT:
+            case ConditionalParser.LT -> {
                 var exprLT = Expr.relationalExpression(left, OP.LT, right);
                 return this.condition = exprLT;
-
-            case ConditionalParser.LTEQ:
+            }
+            case ConditionalParser.LTEQ -> {
                 var exprLTEQ = Expr.relationalExpression(left, OP.LTEQ, right);
                 return this.condition = exprLTEQ;
-            case ConditionalParser.GT:
+            }
+            case ConditionalParser.GT -> {
                 var exprGT = Expr.relationalExpression(left, OP.GT, right);
                 return this.condition = exprGT;
-            case ConditionalParser.GTEQ:
+            }
+            case ConditionalParser.GTEQ -> {
                 var exprGTEQ = Expr.relationalExpression(left, OP.GTEQ, right);
                 return this.condition = exprGTEQ;
-            default:
-                throw new RuntimeException("unknown operator: " + ConditionalParser.tokenNames[ctx.op.getType()]);
+            }
+            default ->
+                    throw new RuntimeException("unknown operator: " + ConditionalParser.tokenNames[ctx.op.getType()]);
         }
     }
 
