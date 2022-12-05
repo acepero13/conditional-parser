@@ -3,6 +3,7 @@ package com.acepero13.research.conditionalparser.visitor;
 import com.acepero13.research.conditional.ConditionalLexer;
 import com.acepero13.research.conditional.ConditionalParser;
 import com.acepero13.research.conditionalparser.model.Expr;
+import com.acepero13.research.conditionalparser.model.IfThen;
 import com.acepero13.research.conditionalparser.model.OP;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -40,6 +41,9 @@ class ConditionalListenerTest {
      * AndExpr(a, b) -> AndExpr(Expr, Expr)
      * OrExpr(AndExpr, RelationalExpr)
      */
+    // TODO: Optional Matcher
+    // TODO: Condition Builder
+    // TODO: Export to another semantic model
     @Test
     @DisplayName("if (a > 0) then b ;")
     void parseSimpleCondition() {
@@ -52,7 +56,11 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
+    }
+
+    private static IfThen cond(Expr expected, String action) {
+        return new IfThen(expected, Expr.identifier(action));
     }
 
     @Test
@@ -67,7 +75,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
     }
 
     @Test
@@ -82,7 +90,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
     }
 
     @Test
@@ -106,7 +114,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
     }
 
     @Test
@@ -122,7 +130,7 @@ class ConditionalListenerTest {
             fail("");
         }
         var expected = Expr.andCondition(Expr.negated(aGTb), cLTb);
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
     }
 
     @Test
@@ -136,7 +144,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "c")));
     }
 
     //
@@ -152,7 +160,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "c")));
     }
 
     @Test
@@ -166,7 +174,7 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "c")));
     }
 
 
@@ -183,8 +191,9 @@ class ConditionalListenerTest {
         if (actualConditionOp.isEmpty()) {
             fail("");
         }
-        assertThat(actualConditionOp.get(), equalTo(expected));
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, "c")));
     }
+
 
     private static ConditionalVisitor createVisitor(String simpleCondition) {
         ConditionalLexer lexer = new ConditionalLexer(CharStreams.fromString(simpleCondition));
@@ -200,6 +209,6 @@ class ConditionalListenerTest {
     }
 
 
-//
+
 
 }

@@ -39,7 +39,6 @@ public interface Expr {
         return negated(identifier(value));
     }
 
-
     record AndExpr(Expr left, Expr right) implements Expr {
     }
 

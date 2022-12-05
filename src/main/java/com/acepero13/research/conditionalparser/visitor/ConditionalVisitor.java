@@ -4,6 +4,7 @@ package com.acepero13.research.conditionalparser.visitor;
 import com.acepero13.research.conditional.ConditionalBaseVisitor;
 import com.acepero13.research.conditional.ConditionalParser;
 import com.acepero13.research.conditionalparser.model.Expr;
+import com.acepero13.research.conditionalparser.model.IfThen;
 import com.acepero13.research.conditionalparser.model.OP;
 
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.Optional;
 public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
 
     private Expr condition;
+    private Expr action;
 
 
     @Override
@@ -70,15 +72,13 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
 
     @Override
     public Expr visitParExpr(ConditionalParser.ParExprContext ctx) {
-        var expr = visit(ctx.expr());
-        return expr;
+        return visit(ctx.expr());
     }
 
     @Override
     public Expr visitAction_block(ConditionalParser.Action_blockContext ctx) {
-        Expr action = this.visit(ctx.expr());
-        //builder.addAction(action);
-        return visitChildren(ctx);
+        this.action = this.visit(ctx.expr());
+        return this.action;
     }
 
     @Override
@@ -103,7 +103,12 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
         return Expr.numeric(Double.valueOf(ctx.getText()));
     }
 
-    public Optional<Expr> condition() {
-        return Optional.ofNullable(condition);
+
+
+    public Optional<IfThen> condition(){
+        if(condition == null || action == null) {
+            return Optional.empty();
+        }
+        return Optional.of(new IfThen(condition, action));
     }
 }
