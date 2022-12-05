@@ -39,6 +39,14 @@ public interface Expr {
         return negated(identifier(value));
     }
 
+    static Expr action(String className, Expr value) {
+        return new Action(className, value);
+    }
+
+    record Action(String className, Expr value) implements Expr {
+
+    }
+
     record AndExpr(Expr left, Expr right) implements Expr {
     }
 

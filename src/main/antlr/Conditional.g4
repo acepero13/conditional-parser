@@ -29,8 +29,11 @@ stat_block
  | stat
  ;
 
-action_block: THEN expr;
+action_block: THEN (expr | action_expr);
 end_block: SCOL;
+
+action_expr
+: CLASS CLASS_SEP expr;
 
 expr
  : expr POW<assoc=right> expr           #powExpr
@@ -75,6 +78,9 @@ ASSIGN : '=';
 OPAR : '(';
 CPAR : ')';
 
+CLASS: 'class';
+CLASS_SEP: ':';
+
 
 TRUE : 'true';
 FALSE : 'false';
@@ -104,3 +110,11 @@ STRING
 COMMENT
  : '#' ~[\r\n]* -> skip
  ;
+
+ SPACE
+  : [ \t\r\n] -> skip
+  ;
+
+ OTHER
+  : .
+  ;

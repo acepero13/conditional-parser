@@ -39,7 +39,7 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
                 return this.condition = exprGTEQ;
             }
             default ->
-                    throw new RuntimeException("unknown operator: " + ConditionalParser.tokenNames[ctx.op.getType()]);
+                    throw new RuntimeException("unknown operator: " + ConditionalParser.VOCABULARY.getDisplayName(ctx.op.getType()));
         }
     }
 
@@ -77,7 +77,14 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
 
     @Override
     public Expr visitAction_block(ConditionalParser.Action_blockContext ctx) {
-        this.action = this.visit(ctx.expr());
+        var expr = ctx.expr();
+        var contextAction = ctx.action_expr();
+        if (expr != null) {
+            this.action = this.visit(expr);
+        }
+        if (contextAction != null) {
+            this.action = this.visit(contextAction);
+        }
         return this.action;
     }
 
@@ -103,10 +110,15 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
         return Expr.numeric(Double.valueOf(ctx.getText()));
     }
 
+    @Override
+    public Expr visitAction_expr(ConditionalParser.Action_exprContext ctx) {
+        var className = ctx.CLASS().getText();
+        var value = visit(ctx.expr());
+        return this.action = Expr.action(className, value);
+    }
 
-
-    public Optional<IfThen> condition(){
-        if(condition == null || action == null) {
+    public Optional<IfThen> condition() {
+        if (condition == null || action == null) {
             return Optional.empty();
         }
         return Optional.of(new IfThen(condition, action));

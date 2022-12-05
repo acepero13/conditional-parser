@@ -63,6 +63,10 @@ class ConditionalListenerTest {
         return new IfThen(expected, Expr.identifier(action));
     }
 
+    private static IfThen cond(Expr expected, Expr action) {
+        return new IfThen(expected, action);
+    }
+
     @Test
     @DisplayName("if (a <= 0) then b ;")
     void parseLessEqual() {
@@ -76,6 +80,21 @@ class ConditionalListenerTest {
             fail("");
         }
         assertThat(actualConditionOp.get(), equalTo(cond(expected, "b")));
+    }
+
+    @Test
+    @DisplayName("if (a > 0) THEN class: neutral;")
+    void classNeutralAction() {
+
+        final String simpleCondition = "if (a > 0) THEN class: neutral;";
+        ConditionalVisitor visitor = createVisitor(simpleCondition);
+
+        var actualConditionOp = visitor.condition();
+        var expected = Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.numeric(0.0));
+        if (actualConditionOp.isEmpty()) {
+            fail("");
+        }
+        assertThat(actualConditionOp.get(), equalTo(cond(expected, Expr.action("class", Expr.identifier("neutral")))));
     }
 
     @Test
@@ -109,6 +128,11 @@ class ConditionalListenerTest {
          * Builder
          *  .of(Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.identifier("b")))
          *  .and(Expr.relationalExpression(Expr.identifier("c"), OP.LT, Expr.identifier("b")));
+         *
+         *  Builder.ofAnd()
+         *  .left(Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.identifier("b")))
+         *  .and()
+         *  .right(Expr.relationalExpression(Expr.identifier("c"), OP.LT, Expr.identifier("b")))
          */
 
         if (actualConditionOp.isEmpty()) {
@@ -207,8 +231,6 @@ class ConditionalListenerTest {
         visitor.visitIf_stat(res);
         return visitor;
     }
-
-
 
 
 }
