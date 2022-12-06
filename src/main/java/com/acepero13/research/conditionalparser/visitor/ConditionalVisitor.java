@@ -7,12 +7,16 @@ import com.acepero13.research.conditionalparser.model.Expr;
 import com.acepero13.research.conditionalparser.model.IfThen;
 import com.acepero13.research.conditionalparser.model.OP;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
+
+class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
 
     private Expr condition;
     private Expr action;
+    private final List<IfThen> conditions = new ArrayList<>();
 
 
     @Override
@@ -88,11 +92,6 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
         return this.action;
     }
 
-    @Override
-    public Expr visitEnd_block(ConditionalParser.End_blockContext ctx) {
-        return visitChildren(ctx);
-    }
-
 
     @Override
     public Expr visitIdAtom(ConditionalParser.IdAtomContext ctx) {
@@ -112,15 +111,22 @@ public class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
 
     @Override
     public Expr visitAction_expr(ConditionalParser.Action_exprContext ctx) {
-        var className = ctx.CLASS().getText();
+        var className = ctx.ID().getText();
         var value = visit(ctx.expr());
         return this.action = Expr.action(className, value);
     }
 
-    public Optional<IfThen> condition() {
-        if (condition == null || action == null) {
-            return Optional.empty();
-        }
-        return Optional.of(new IfThen(condition, action));
+    @Override
+    public Expr visitEnd_block(ConditionalParser.End_blockContext ctx) {
+        Optional.ofNullable(condition)
+                .map(c -> new IfThen(condition, action))
+                .ifPresent(conditions::add);
+
+        return visitChildren(ctx);
+    }
+
+
+    public List<IfThen> conditions() {
+        return this.conditions;
     }
 }

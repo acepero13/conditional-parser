@@ -9,8 +9,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class ParserBuilder {
 
@@ -20,11 +20,11 @@ public class ParserBuilder {
         this.is = is;
     }
 
-    public ParserBuilder of(String code) {
+    public static ParserBuilder of(String code) {
         return new ParserBuilder(str2Is(code));
     }
 
-    public ParserBuilder of(InputStream is) {
+    public static ParserBuilder of(InputStream is) {
         return new ParserBuilder(is);
     }
 
@@ -32,24 +32,24 @@ public class ParserBuilder {
         return new ByteArrayInputStream(code.getBytes());
     }
 
-    // TODO: Several conditions
-    public Optional<IfThen> parse() {
+
+    public List<IfThen> parse() {
         ConditionalLexer lexer = buildLexer();
 
         CommonTokenStream tokens = new CommonTokenStream(Objects.requireNonNull(lexer, "lexer cannot be null"));
 
         ConditionalParser parser = new ConditionalParser(tokens);
 
-        var result = parser.if_stat();
+
+        var tree = parser.parse();
 
         var visitor = new ConditionalVisitor();
-        visitor.visitIf_stat(result);
-
-        return visitor.condition();
+        visitor.visit(tree);
+        return visitor.conditions();
     }
 
     private ConditionalLexer buildLexer() {
-        ConditionalLexer lexer = null;
+        ConditionalLexer lexer;
         try {
             lexer = new ConditionalLexer(CharStreams.fromStream(is));
         } catch (IOException e) {

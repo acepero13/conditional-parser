@@ -39,8 +39,8 @@ public interface Expr {
         return negated(identifier(value));
     }
 
-    static Expr action(String className, Expr value) {
-        return new Action(className, value);
+    static Expr action(String label, Expr value) {
+        return new Action(label, value);
     }
 
     record Action(String className, Expr value) implements Expr {
