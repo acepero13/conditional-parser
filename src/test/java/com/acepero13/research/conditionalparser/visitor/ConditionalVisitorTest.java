@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.fail;
 
 class ConditionalVisitorTest {
@@ -32,7 +32,7 @@ class ConditionalVisitorTest {
     void parseSimpleCondition() {
 
         final String simpleCondition = "if (a > 0) then b ;";
-        
+
 
         var actualCondition = parse(simpleCondition);
         var expected = cond(Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.numeric(0.0)), "b");
@@ -44,7 +44,7 @@ class ConditionalVisitorTest {
     void parsesTwoConditions() {
 
         final String simpleCondition = "if (a > 0) then b ; if (c < 0) then d; ";
-        
+
 
         var actualCondition = parse(simpleCondition);
         var expected1 = cond(Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.numeric(0.0)), "b");
@@ -82,7 +82,7 @@ class ConditionalVisitorTest {
     void parseLessEqual() {
 
         final String simpleCondition = "if (a <= 0) then b ;";
-        
+
 
         var actualCondition = parse(simpleCondition);
         var expected = cond(Expr.relationalExpression(Expr.identifier("a"), OP.LTEQ, Expr.numeric(0.0)), "b");
@@ -96,7 +96,7 @@ class ConditionalVisitorTest {
         final String simpleCondition = "if (a > 0) THEN class: neutral;";
         var actualCondition = parse(simpleCondition);
 
-        
+
         var condition = Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.numeric(0.0));
         var expected = cond(condition, Expr.action("class", Expr.identifier("neutral")));
         assertEquals(actualCondition, expected);
@@ -108,7 +108,7 @@ class ConditionalVisitorTest {
 
         final String simpleCondition = "if (a > 0) THEN label: neutral;";
         var actualCondition = parse(simpleCondition);
-        
+
         var condition = Expr.relationalExpression(Expr.identifier("a"), OP.GT, Expr.numeric(0.0));
         var expected = cond(condition, Expr.action("label", Expr.identifier("neutral")));
         assertEquals(actualCondition, expected);
@@ -121,7 +121,7 @@ class ConditionalVisitorTest {
         final String simpleCondition = "if (a >= 0) then b ;";
         var actualCondition = parse(simpleCondition);
 
-        
+
         var expected = cond(Expr.relationalExpression(Expr.identifier("a"), OP.GTEQ, Expr.numeric(0.0)), "b");
         assertEquals(actualCondition, expected);
     }
@@ -196,6 +196,13 @@ class ConditionalVisitorTest {
         var secondStm = Expr.eq(Expr.identifier("b"), Expr.numeric(2));
         var expected = cond(Expr.andCondition(firstStm, secondStm), "c");
         assertEquals(actualCondition, expected);
+    }
+
+    @Test
+    @DisplayName("syntax error")
+    void syntaxError() {
+        var parsed = parse("if -syntax_error;");
+        assertThat(parsed, emptyCollectionOf(IfThen.class));
     }
 
 

@@ -3,6 +3,7 @@ package com.acepero13.research.conditionalparser.visitor;
 import com.acepero13.research.conditional.ConditionalLexer;
 import com.acepero13.research.conditional.ConditionalParser;
 import com.acepero13.research.conditionalparser.model.IfThen;
+import com.acepero13.research.conditionalparser.visitor.exceptions.BuilderException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
@@ -53,7 +54,7 @@ public class ParserBuilder {
         try {
             lexer = new ConditionalLexer(CharStreams.fromStream(is));
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new BuilderException("Error while building the lexer", e);
         }
         return lexer;
     }

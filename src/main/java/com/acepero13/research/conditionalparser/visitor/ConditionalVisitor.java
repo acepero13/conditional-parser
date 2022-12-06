@@ -6,6 +6,7 @@ import com.acepero13.research.conditional.ConditionalParser;
 import com.acepero13.research.conditionalparser.model.Expr;
 import com.acepero13.research.conditionalparser.model.IfThen;
 import com.acepero13.research.conditionalparser.model.OP;
+import com.acepero13.research.conditionalparser.visitor.exceptions.ParserException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +44,7 @@ class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
                 return this.condition = exprGTEQ;
             }
             default ->
-                    throw new RuntimeException("unknown operator: " + ConditionalParser.VOCABULARY.getDisplayName(ctx.op.getType()));
+                    throw new ParserException("unknown operator: " + ConditionalParser.VOCABULARY.getDisplayName(ctx.op.getType()));
         }
     }
 
