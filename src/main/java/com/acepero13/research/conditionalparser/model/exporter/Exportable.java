@@ -1,6 +1,7 @@
 package com.acepero13.research.conditionalparser.model.exporter;
 
 import com.acepero13.research.conditionalparser.model.Expr;
+import com.acepero13.research.conditionalparser.visitor.exceptions.ParserException;
 
 public interface Exportable {
     <A> A and(Expr.AndExpr expr);
@@ -35,7 +36,7 @@ public interface Exportable {
         } else if (expr instanceof Expr.Action actionExpr) {
             return action(actionExpr);
         }
-        throw new RuntimeException("Cannot parse expression: " + expr);
+        throw new ParserException("Cannot parse expression: " + expr);
     }
 }
 
