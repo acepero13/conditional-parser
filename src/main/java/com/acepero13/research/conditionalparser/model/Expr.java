@@ -1,6 +1,8 @@
 package com.acepero13.research.conditionalparser.model;
 
 
+import lombok.Data;
+
 public interface Expr {
 
     static Expr relationalExpression(Expr left, OP operator, Expr right) {
@@ -43,31 +45,50 @@ public interface Expr {
         return new Action(label, value);
     }
 
-    record Action(String className, Expr value) implements Expr {
-
+    @Data
+    class Action implements Expr {
+        private final String className;
+        private final Expr value;
     }
 
-    record AndExpr(Expr left, Expr right) implements Expr {
+    @Data
+    class AndExpr implements Expr {
+        private final Expr left;
+        private final Expr right;
     }
 
-    record NegationExpr(Expr value) implements Expr {
+    @Data
+    class NegationExpr implements Expr {
+        private final Expr value;
     }
 
-    record OrExpr(Expr left, Expr right) implements Expr {
+    @Data
+    class OrExpr implements Expr {
+        private final Expr left;
+        private final Expr right;
     }
 
-    record NumericExpr(double value) implements Expr {
+    @Data
+    class NumericExpr implements Expr {
+        private final double value;
     }
 
-    record IdentifierExpr(String value) implements Expr {
+    @Data
+    class IdentifierExpr implements Expr {
+        private final String value;
     }
 
-    record EqualityExpr(Expr left, Expr right) implements Expr {
-
+    @Data
+    class EqualityExpr implements Expr {
+        private final Expr left;
+        private final Expr right;
     }
 
-    record RelationalExpr(Expr left, OP operator, Expr right) implements Expr {
-
+    @Data
+    class RelationalExpr implements Expr {
+        private final Expr left;
+        private final OP operator;
+        private final Expr right;
     }
 
 }

@@ -25,8 +25,8 @@ public class JsonExporterTest {
         public JsonObject and(Expr.AndExpr expr) {
             JsonObject result = new JsonObject();
             JsonObject andCondition = new JsonObject();
-            andCondition.add("left", export(expr.left()));
-            andCondition.add("right", export(expr.right()));
+            andCondition.add("left", export(expr.getLeft()));
+            andCondition.add("right", export(expr.getRight()));
             result.add("and", andCondition);
             return result;
         }
@@ -44,14 +44,14 @@ public class JsonExporterTest {
         @Override
         public JsonObject numeric(Expr.NumericExpr expr) {
             var result = new JsonObject();
-            result.addProperty("number", expr.value());
+            result.addProperty("number", expr.getValue());
             return result;
         }
 
         @Override
         public JsonObject identifier(Expr.IdentifierExpr expr) {
             var result = new JsonObject();
-            result.addProperty("identifier", expr.value());
+            result.addProperty("identifier", expr.getValue());
             return result;
         }
 
@@ -69,9 +69,9 @@ public class JsonExporterTest {
         public JsonObject relational(Expr.RelationalExpr expr) {
             JsonObject result = new JsonObject();
             JsonObject relation = new JsonObject();
-            relation.add("left", export(expr.left()));
-            relation.addProperty("op", expr.operator().toString());
-            relation.add("right", export(expr.right()));
+            relation.add("left", export(expr.getLeft()));
+            relation.addProperty("op", expr.getOperator().toString());
+            relation.add("right", export(expr.getRight()));
             result.add("relationalCondition", relation);
             return result;
         }
