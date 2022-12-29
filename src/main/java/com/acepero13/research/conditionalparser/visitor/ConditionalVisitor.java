@@ -114,7 +114,23 @@ class ConditionalVisitor extends ConditionalBaseVisitor<Expr> {
     public Expr visitAction_expr(ConditionalParser.Action_exprContext ctx) {
         var className = ctx.ID().getText();
         var value = visit(ctx.expr());
+        var probabilityLabel = ctx.PROB();
+        var probabilityValue = ctx.FLOAT();
+
+        if (probabilityLabel != null && probabilityValue != null) {
+
+            return this.action = Expr.action(className, value, parse(probabilityValue.getText()));
+        }
+
         return this.action = Expr.action(className, value);
+    }
+
+    private static Double parse(String text) {
+        try {
+            return Double.valueOf(text);
+        } catch (Exception e) {
+            return 0.0;
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.acepero13.research.conditionalparser.model;
 
 
 import lombok.Data;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 public interface Expr {
 
@@ -29,6 +30,10 @@ public interface Expr {
         return new EqualityExpr(left, value);
     }
 
+    static Expr gt(Expr left, Expr right) {
+        return new RelationalExpr(left, OP.GT, right);
+    }
+
     static Expr numeric(int value) {
         return numeric(Double.valueOf(value));
     }
@@ -42,19 +47,34 @@ public interface Expr {
     }
 
     static Expr action(String label, Expr value) {
-        return new Action(label, value);
+        return new Action(label, value, 0.0);
     }
+
+    static Expr lt(Expr left, Expr right) {
+        return new RelationalExpr(left, OP.LT, right);
+    }
+
+    static Expr lteq(Expr left, Expr right) {
+        return new RelationalExpr(left, OP.LTEQ, right);
+    }
+
+    static Expr action(String className, Expr value, Double probability) {
+        return new Action(className, value, probability);
+    }
+
 
     @Data
     class Action implements Expr {
         private final String className;
         private final Expr value;
+        private final Double probability;
     }
 
     @Data
     class AndExpr implements Expr {
         private final Expr left;
         private final Expr right;
+
     }
 
     @Data

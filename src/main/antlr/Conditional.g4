@@ -17,7 +17,7 @@ stat
 
 
 if_stat
- : IF '(' condition_block ')' action_block  end_block
+ : IF condition_block action_block  end_block
  ;
 
 condition_block
@@ -30,10 +30,10 @@ stat_block
  ;
 
 action_block: THEN (expr | action_expr);
-end_block: SCOL;
+end_block: SCOL NEWLINE | NEWLINE+ ;
 
 action_expr
-: ID CLASS_SEP expr;
+: ID CLASS_SEP expr ('(' PROB CLASS_SEP FLOAT '%)'|);
 
 expr
  : expr POW<assoc=right> expr           #powExpr
@@ -73,13 +73,15 @@ MOD : '%';
 POW : '^';
 NOT : '!';
 
-SCOL : ';';
+SCOL : ';' ;
 ASSIGN : '=';
 OPAR : '(';
 CPAR : ')';
 
-CLASS_SEP: ':';
+NEWLINE : '\r' '\n' | '\n' | '\r';
 
+CLASS_SEP: ':';
+PROB: 'prob';
 
 TRUE : 'true';
 FALSE : 'false';
@@ -108,6 +110,10 @@ STRING
 
 COMMENT
  : '#' ~[\r\n]* -> skip
+ ;
+
+ NOT_INTERESTING_INFO
+ : '| based' .*? ~[\r\n]* -> skip
  ;
 
  SPACE
